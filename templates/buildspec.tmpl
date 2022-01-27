@@ -1,0 +1,80 @@
+version: 0.2
+env:
+  variables:
+    application_name: ${repository_name}
+    codeartifact_repository: ${codeartifact_repository}
+    codeartifact_domain: ${codeartifact_domain}
+    dockerhub_user: ${dockerhub_user}
+    domain_owner: ${codeartifact_account_id}
+    environment: ${environment}
+    image_repo: ${image_repo} 
+    image_repo_name: ${image_repo_name} 
+    proxy_name: ${proxy_name}
+  parameter-store:
+    dockerhub_password: "dpl-dockerhub-password"
+
+phases:
+  pre_build:
+    commands:
+      - echo "[ECHO] Running pre_build STEP at $(date)"
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.0   --depth=1 utilities
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - docker login --username $dockerhub_user --password $dockerhub_password
+      - app_image_version=v`grep -Po '(?<=^version=).+' build.txt`
+      - app1_image_version=$app_image_version
+      - app_repo=`utilities/ecr_image_check.sh $image_repo $application_name $app_image_version`
+      - app_image_version=`utilities/remove_snapshot.sh $app_image_version` 
+      - app_repo=$app_repo:$app_image_version
+      - docker pull $app_repo || true
+      - is_app1=`grep -c 'app1' docker-compose.yml || true`
+      - |-
+        if [ "$is_app1" -gt 0 ]; then
+          echo "app1 is present"
+          app1_repo=`utilities/ecr_image_check.sh $image_repo $application_name-app1 $app1_image_version`
+          app1_image_version=`utilities/remove_snapshot.sh $app1_image_version` 
+          app1_repo=$app1_repo:$app1_image_version
+          docker pull $app1_repo || true
+        fi
+      - pip3 install awscli --upgrade --user
+      - CMD0="aws codeartifact login --tool npm --domain $codeartifact_domain --domain-owner $domain_owner --repository $codeartifact_repository"
+      - echo $CMD0
+      - exec $CMD0
+      - cat ~/.npmrc  
+  build:
+    commands:
+      - cp ~/.npmrc .
+      - CMD="docker build -t $app_repo --build-arg ENV=$environment   --cache-from $app_repo ."
+      - echo $CMD
+      - exec $CMD
+      - |-
+        if [ "$is_app1" -gt 0 ]; then
+          echo "app1 building"
+          CMD="docker build -t $app1_repo --build-arg ENV=$environment   --cache-from $app1_repo -f dockerfile-app1 ."
+          echo $CMD
+          exec $CMD
+        fi
+
+  post_build:
+    commands:
+      - echo "[ECHO] Running post_build STEP at $(date)"
+      - echo "[ECHO] Docker push image"
+      - docker push $app_repo
+      - help1="paste following content in 'imagedefinitions.json' inside repository '%s' if not present\n" 
+      - |-
+        if [ "$is_app1" -gt 0 ]; then
+          echo "app1 pushing"
+          docker push $app1_repo
+          echo $help1
+          printf '[{"name":"app","imageUri":"%s"},{"name":"app1","imageUri":"%s"}]' $app_repo $app1_repo | python -m json.tool
+        else
+          echo $help1
+          printf '[{"name":"app","imageUri":"%s"}]' $app_repo | python -m json.tool
+        fi
+      - printf 'app=%s' $app_repo > tag
+artifacts:
+    files: 
+      - build.txt
+      - docker-compose.aws.yml
+      - docker-compose.yml
+      - ecs-params.yml
+      - tag

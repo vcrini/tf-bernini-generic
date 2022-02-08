@@ -40,5 +40,5 @@ variable "vpc_id" {
   type        = string
 }
 locals {
-  ssl_certificate_arn = "arn:aws:iam::${local.account_id}:${var.ssl_certificate_arn_name}"
+  ssl_certificate_arn = "arn:aws:acm:${local.region}:${local.account_id}:${var.ssl_certificate_arn_name}"
 }

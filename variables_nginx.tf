@@ -1,119 +1,34 @@
-variable "APPDEMO_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "APPDEMO_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "AUTHENTICATION_ADMINFRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
 variable "AUTHENTICATION_BACKEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "BASEDATATABLES_BACKEND" {
+variable "IMAGE_PROCESSOR_BACKEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "BASEDATATABLES_FRONTEND" {
+variable "COLOR_EXTRACTOR_BACKEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "CDN" {
+variable "NEEDLE_BACKEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "CRON_BACKEND" {
+variable "NEEDLE_FRONTEND" {
+  default     = ""
+  description = "environment variable to use asdynamic hostname for homonym component"
+  type        = string
+}
+variable "PDF_REPORT_GENERATOR_BACKEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "CRON_ADMINFRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "DEMAND_PRODUCT_FEATURES_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "DEMAND_PRODUCT_FEATURES_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "FORECAST_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "FORECAST_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "KERINGAI_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "KERINGAI_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "MAINFRONT_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "NOTIFICATION_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "NOTIFICATION_ADMINFRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SALESWINDOWS_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SALESWINDOWS_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SEASONALITY_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SEASONALITY_FRONTEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SO99_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
-variable "SO99_FRONTEND" {
+variable "STATIC_FRONTEND" {
   default     = ""
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
@@ -123,8 +38,4 @@ variable "STORAGE_BACKEND" {
   description = "environment variable to use as dynamic hostname for homonym component"
   type        = string
 }
-variable "USERPREFERENCES_BACKEND" {
-  default     = ""
-  description = "environment variable to use as dynamic hostname for homonym component"
-  type        = string
-}
+

@@ -54,17 +54,20 @@ module "deploy" {
   codepipeline_bucket     = var.codepipeline_bucket
   deploy_environment      = var.deploy_environment
   deployspec              = local.deployspec
+  force_approve           = var.force_approve
   image                   = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+  kms_arn                 = var.kms_arn
   poll_for_source_changes = "false"
+  prefix                  = var.prefix
   repository_name         = local.repository_name
   role_arn                = local.role_arn
   role_arn_codebuild      = local.role_arn_codebuild
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=0.8.0"
-  tags   = var.tag
+  source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  #source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=0.8.0"
+  tags = var.tag
 }
 
 resource "aws_cloudwatch_log_group" "log" {
@@ -77,12 +80,14 @@ resource "aws_cloudwatch_log_group" "log" {
 module "balancer" {
   alarm_arn            = var.alarm_arn
   default_cname        = var.default_cname
+  deploy_environment   = var.deploy_environment
   repository_name      = local.repository_name
   deregistration_delay = 120
   listener             = var.listener
   lb_name              = var.lb_name
   nlb_name             = var.nlb_name
-  source = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
+  prefix               = var.prefix
+  source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
   #source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=0.6.0"
   ssl_certificate_arn = local.ssl_certificate_arn
   tags                = var.tag

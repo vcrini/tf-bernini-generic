@@ -26,6 +26,12 @@ variable "additional_ecr_repos" {
   description = "used to create ECR infrastructure if there is more than one"
   type        = list(any)
 }
+variable "force_approve" {
+  type        = string
+  default     = "false"
+  description = "if false than an approve is requested, otherwise there is no approve phase after build and before deploy"
+}
+
 variable "role_arn_source_name" {
   default     = "assumecodecommitguccidev"
   description = "used to allow production to trigger in test events"
@@ -90,6 +96,11 @@ variable "enable_cross_account" {
 variable "image_repo_name" {
   default     = "fdh-sbt"
   description = "name of repository with sbt builder image"
+  type        = string
+}
+variable "kms_arn" {
+  default     = "arn:aws:kms:eu-west-1:796341525871:key/e9141a5d-f993-    464d-af9e-82f5272c85f9"
+  description = "kms keys used to crypt bucket to enable cross account access for prod -> test"
   type        = string
 }
 variable "manage_repositories" {
@@ -188,7 +199,7 @@ locals {
   role_arn2             = "${local.role_prefix2}${var.deploy_role}"
   role_arn_target       = "${local.role_prefix}${var.prefix}-start-pipeline-automation"
   role_arn_target2      = "${local.role_prefix2}${var.prefix}-start-pipeline-automation"
-  role_arn_task         = "${local.role_prefix}${var.role_arn_task_name}"
+  role_arn_task         = "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
   role_arn_codebuild    = "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
   role_arn_codepipeline = "${local.role_prefix}${var.role_arn_codepipeline_name}"
   role_arn_source       = "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
@@ -213,51 +224,34 @@ locals {
   deploy2_name = local.repository_name_deploy
   deployspec = templatefile("${path.module}/templates/deployspec.tmpl",
     {
-      aws_container_name               = var.target_group["app"]["container"]
-      aws_container_port               = var.target_group["app"]["destination_port"]
-      aws_desired_count                = var.aws_desired_count
-      aws_ecs_cluster                  = var.aws_ecs_cluster
-      aws_service_name                 = local.repository_name
-      aws_security_group               = var.aws_security_group
-      aws_stream_prefix                = local.repository_name
-      aws_subnet                       = var.aws_subnet
-      aws_target_group_arn             = module.balancer.output_lb_target_group["app"].arn
-      deployment_max_percent           = var.deployment_max_percent
-      deployment_min_healthy_percent   = var.deployment_min_healthy_percent
-      ecs_image_pull_behavior          = var.ecs_image_pull_behavior
-      environment                      = var.deploy_environment
-      image_repo                       = local.image_repo
-      image_repo_name                  = var.image_repo_name
-      proxy_name                       = local.proxy_name
-      repository_name                  = local.repository_name
-      sbt_image_version                = var.sbt_image_version
-      task_role_arn                    = local.role_arn_task
-      APPDEMO_BACKEND                  = var.APPDEMO_BACKEND
-      APPDEMO_FRONTEND                 = var.APPDEMO_FRONTEND
-      AUTHENTICATION_ADMINFRONTEND     = var.AUTHENTICATION_ADMINFRONTEND
-      AUTHENTICATION_BACKEND           = var.AUTHENTICATION_BACKEND
-      BASEDATATABLES_BACKEND           = var.BASEDATATABLES_BACKEND
-      BASEDATATABLES_FRONTEND          = var.BASEDATATABLES_FRONTEND
-      CDN                              = var.CDN
-      CRON_ADMINFRONTEND               = var.CRON_ADMINFRONTEND
-      CRON_BACKEND                     = var.CRON_BACKEND
-      DEMAND_PRODUCT_FEATURES_BACKEND  = var.DEMAND_PRODUCT_FEATURES_BACKEND
-      DEMAND_PRODUCT_FEATURES_FRONTEND = var.DEMAND_PRODUCT_FEATURES_FRONTEND
-      FORECAST_BACKEND                 = var.FORECAST_BACKEND
-      FORECAST_FRONTEND                = var.FORECAST_FRONTEND
-      KERINGAI_BACKEND                 = var.KERINGAI_BACKEND
-      KERINGAI_FRONTEND                = var.KERINGAI_FRONTEND
-      MAINFRONT_FRONTEND               = var.MAINFRONT_FRONTEND
-      NOTIFICATION_ADMINFRONTEND       = var.NOTIFICATION_ADMINFRONTEND
-      NOTIFICATION_BACKEND             = var.NOTIFICATION_BACKEND
-      SALESWINDOWS_BACKEND             = var.SALESWINDOWS_BACKEND
-      SALESWINDOWS_FRONTEND            = var.SALESWINDOWS_FRONTEND
-      SEASONALITY_BACKEND              = var.SEASONALITY_BACKEND
-      SEASONALITY_FRONTEND             = var.SEASONALITY_FRONTEND
-      SO99_BACKEND                     = var.SO99_BACKEND
-      SO99_FRONTEND                    = var.SO99_FRONTEND
-      STORAGE_BACKEND                  = var.STORAGE_BACKEND
-      USERPREFERENCES_BACKEND          = var.USERPREFERENCES_BACKEND
+      aws_container_name             = var.target_group["app"]["container"]
+      aws_container_port             = var.target_group["app"]["destination_port"]
+      aws_desired_count              = var.aws_desired_count
+      aws_ecs_cluster                = var.aws_ecs_cluster
+      aws_service_name               = local.repository_name
+      aws_security_group             = var.aws_security_group
+      aws_stream_prefix              = local.repository_name
+      aws_subnet                     = var.aws_subnet
+      aws_target_group_arn           = module.balancer.output_lb_target_group["app"].arn
+      deployment_max_percent         = var.deployment_max_percent
+      deployment_min_healthy_percent = var.deployment_min_healthy_percent
+      ecs_image_pull_behavior        = var.ecs_image_pull_behavior
+      environment                    = var.deploy_environment
+      image_repo                     = local.image_repo
+      image_repo_name                = var.image_repo_name
+      proxy_name                     = local.proxy_name
+      repository_name                = local.repository_name
+      sbt_image_version              = var.sbt_image_version
+      task_role_arn                  = local.role_arn_task
+      AUTHENTICATION_BACKEND         = var.AUTHENTICATION_BACKEND
+      COLOR_EXTRACTOR_BACKEND        = var.COLOR_EXTRACTOR_BACKEND
+      ENV                            = var.deploy_environment
+      IMAGE_PROCESSOR_BACKEND        = var.IMAGE_PROCESSOR_BACKEND
+      NEEDLE_BACKEND                 = var.NEEDLE_BACKEND
+      NEEDLE_FRONTEND                = var.NEEDLE_FRONTEND
+      PDF_REPORT_GENERATOR_BACKEND   = var.PDF_REPORT_GENERATOR_BACKEND
+      STATIC_FRONTEND                = var.STATIC_FRONTEND
+      STORAGE_BACKEND                = var.STORAGE_BACKEND
 
     }
   )

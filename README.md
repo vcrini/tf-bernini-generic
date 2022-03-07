@@ -32,14 +32,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_AUTHENTICATION_BACKEND"></a> [AUTHENTICATION\_BACKEND](#input\_AUTHENTICATION\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_COLOR_EXTRACTOR_BACKEND"></a> [COLOR\_EXTRACTOR\_BACKEND](#input\_COLOR\_EXTRACTOR\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_IMAGE_PROCESSOR_BACKEND"></a> [IMAGE\_PROCESSOR\_BACKEND](#input\_IMAGE\_PROCESSOR\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_NEEDLE_BACKEND"></a> [NEEDLE\_BACKEND](#input\_NEEDLE\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_NEEDLE_FRONTEND"></a> [NEEDLE\_FRONTEND](#input\_NEEDLE\_FRONTEND) | environment variable to use asdynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_PDF_REPORT_GENERATOR_BACKEND"></a> [PDF\_REPORT\_GENERATOR\_BACKEND](#input\_PDF\_REPORT\_GENERATOR\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_STATIC_FRONTEND"></a> [STATIC\_FRONTEND](#input\_STATIC\_FRONTEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
-| <a name="input_STORAGE_BACKEND"></a> [STORAGE\_BACKEND](#input\_STORAGE\_BACKEND) | environment variable to use as dynamic hostname for homonym component | `string` | `""` | no |
 | <a name="input_additional_ecr_repos"></a> [additional\_ecr\_repos](#input\_additional\_ecr\_repos) | used to create ECR infrastructure if there is more than one | `list(any)` | `[]` | no |
 | <a name="input_alarm_arn"></a> [alarm\_arn](#input\_alarm\_arn) | SNS topic to alert when balancer fails | `string` | n/a | yes |
 | <a name="input_aws_account_id2"></a> [aws\_account\_id2](#input\_aws\_account\_id2) | needed for creating role to create infrastructure for codecommit in prod enviroment | `string` | `"092467779203"` | no |
@@ -67,6 +59,7 @@
 | <a name="input_lb_name"></a> [lb\_name](#input\_lb\_name) | balancer name | `string` | n/a | yes |
 | <a name="input_listener"></a> [listener](#input\_listener) | map representing listener configuration | `map(any)` | n/a | yes |
 | <a name="input_manage_repositories"></a> [manage\_repositories](#input\_manage\_repositories) | to let this library to manage directly repository creation | `string` | `"false"` | no |
+| <a name="input_nginx"></a> [nginx](#input\_nginx) | dictionary environment variable to use as dynamic hostname for homonym component | `map(any)` | `{}` | no |
 | <a name="input_nlb_name"></a> [nlb\_name](#input\_nlb\_name) | name of LB | `string` | `null` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | prefix name for infrastructure, ex. fdh, dpl, bitots | `string` | n/a | yes |
 | <a name="input_repository_name"></a> [repository\_name](#input\_repository\_name) | name of the repository inferred by directory name | `string` | n/a | yes |

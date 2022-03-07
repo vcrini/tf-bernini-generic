@@ -108,6 +108,11 @@ variable "manage_repositories" {
   description = "to let this library to manage directly repository creation"
   type        = string
 }
+variable "nginx" {
+  default     = {}
+  description = "dictionary environment variable to use as dynamic hostname for homonym component"
+  type        = map(any)
+}
 variable "prefix" {
   description = "prefix name for infrastructure, ex. fdh, dpl, bitots"
   type        = string
@@ -243,15 +248,8 @@ locals {
       repository_name                = local.repository_name
       sbt_image_version              = var.sbt_image_version
       task_role_arn                  = local.role_arn_task
-      AUTHENTICATION_BACKEND         = var.AUTHENTICATION_BACKEND
-      COLOR_EXTRACTOR_BACKEND        = var.COLOR_EXTRACTOR_BACKEND
       ENV                            = var.deploy_environment
-      IMAGE_PROCESSOR_BACKEND        = var.IMAGE_PROCESSOR_BACKEND
-      NEEDLE_BACKEND                 = var.NEEDLE_BACKEND
-      NEEDLE_FRONTEND                = var.NEEDLE_FRONTEND
-      PDF_REPORT_GENERATOR_BACKEND   = var.PDF_REPORT_GENERATOR_BACKEND
-      STATIC_FRONTEND                = var.STATIC_FRONTEND
-      STORAGE_BACKEND                = var.STORAGE_BACKEND
+      nginx                          = var.nginx
 
     }
   )

@@ -18,28 +18,15 @@ env:
     environment: ${environment}
     image_repo: ${image_repo} 
     image_repo_name: ${image_repo_name} 
-    AUTHENTICATION_BACKEND: ${AUTHENTICATION_BACKEND}
-    COLOR_EXTRACTOR_BACKEND: ${COLOR_EXTRACTOR_BACKEND}
     ENV: ${environment}
-    IMAGE_PROCESSOR_BACKEND: ${IMAGE_PROCESSOR_BACKEND}
-    NEEDLE_BACKEND: ${NEEDLE_BACKEND}
-    NEEDLE_FRONTEND: ${NEEDLE_FRONTEND}
-    PDF_REPORT_GENERATOR_BACKEND: ${PDF_REPORT_GENERATOR_BACKEND}
-    STATIC_FRONTEND: ${STATIC_FRONTEND}
-    STORAGE_BACKEND: ${STORAGE_BACKEND}
-
+    %{ for config_key, config_value in nginx }${config_key}: ${config_value} 
+    %{ endfor ~}
 
   exported-variables:
     - environment
-    - AUTHENTICATION_BACKEND
-    - COLOR_EXTRACTOR_BACKEND
     - ENV
-    - IMAGE_PROCESSOR_BACKEND
-    - NEEDLE_BACKEND
-    - NEEDLE_FRONTEND
-    - PDF_REPORT_GENERATOR_BACKEND
-    - STATIC_FRONTEND
-    - STORAGE_BACKEND
+    %{ for config_key, config_value in nginx }- ${config_key}
+    %{ endfor ~}
 
 phases:
   build:

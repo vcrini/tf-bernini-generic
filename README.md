@@ -15,8 +15,8 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_balancer"></a> [balancer](#module\_balancer) | /Users/vcrini/Repositories/terraform-modules//load_balancer | n/a |
-| <a name="module_deploy"></a> [deploy](#module\_deploy) | /Users/vcrini/Repositories/terraform-modules/deploy_x_application | n/a |
+| <a name="module_balancer"></a> [balancer](#module\_balancer) | git::https://bitbucket.org/valeri0/load_balancer.git// | 0.8.0 |
+| <a name="module_deploy"></a> [deploy](#module\_deploy) | git::https://bitbucket.org/valeri0/deploy_x_application | 0.9.0 |
 | <a name="module_ecr_immutable"></a> [ecr\_immutable](#module\_ecr\_immutable) | git::https://bitbucket.org/valeri0/ecr.git | 0.2.0 |
 | <a name="module_ecr_mutable"></a> [ecr\_mutable](#module\_ecr\_mutable) | git::https://bitbucket.org/valeri0/ecr.git | 0.2.0 |
 

@@ -65,9 +65,9 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  #source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=0.8.0"
-  tags = var.tag
+  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=0.9.0"
+  tags   = var.tag
 }
 
 resource "aws_cloudwatch_log_group" "log" {
@@ -87,8 +87,8 @@ module "balancer" {
   lb_name              = var.lb_name
   nlb_name             = var.nlb_name
   prefix               = var.prefix
-  source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
-  #source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=0.6.0"
+  # source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
+  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=0.8.0"
   ssl_certificate_arn = local.ssl_certificate_arn
   tags                = var.tag
   target_group        = var.target_group

@@ -20,8 +20,7 @@ module "ecr_immutable" {
 }
 EOF
   #source = "/Users/vcrini/Repositories/terraform-modules/ecr"
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.2.0"
-  tags   = var.tag
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.4.0"
 }
 module "ecr_mutable" {
   name   = formatlist("%s-%s", local.ecr_repositories, "snapshot")
@@ -43,8 +42,7 @@ module "ecr_mutable" {
       ]
 }
 EOF
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.2.0"
-  tags   = var.tag
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.4.0"
 }
 module "deploy" {
   # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
@@ -66,15 +64,13 @@ module "deploy" {
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
   # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=0.9.0"
-  tags   = var.tag
+  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.0.0"
 }
 
 resource "aws_cloudwatch_log_group" "log" {
   for_each          = toset([module.deploy.cloudwatch_build_log, module.deploy.cloudwatch_deploy_log])
   name              = each.value
   retention_in_days = var.retention_in_days
-  tags              = var.tag
 }
 
 module "balancer" {
@@ -87,11 +83,9 @@ module "balancer" {
   lb_name              = var.lb_name
   nlb_name             = var.nlb_name
   prefix               = var.prefix
-  # source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
-  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=0.8.0"
+  # source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
+  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.0.1"
   ssl_certificate_arn = local.ssl_certificate_arn
-  tags                = var.tag
   target_group        = var.target_group
-  target_group_prefix = var.target_group_prefix
   vpc_id              = var.vpc_id
 }

@@ -19,13 +19,13 @@ env:
     image_repo: ${image_repo} 
     image_repo_name: ${image_repo_name} 
     ENV: ${environment}
-    %{ for config_key, config_value in nginx }${config_key}: ${config_value} 
+    %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
     %{ endfor ~}
 
   exported-variables:
     - environment
     - ENV
-    %{ for config_key, config_value in nginx }- ${config_key}
+    %{ for config_key, config_value in container_env }- ${config_key}
     %{ endfor ~}
 
 phases:

@@ -99,7 +99,7 @@ variable "image_repo_name" {
   type        = string
 }
 variable "kms_arn" {
-  default     = "arn:aws:kms:eu-west-1:796341525871:key/e9141a5d-f993-    464d-af9e-82f5272c85f9"
+  default     = "arn:aws:kms:eu-west-1:796341525871:key/e9141a5d-f993-464d-af9e-82f5272c85f9"
   description = "kms keys used to crypt bucket to enable cross account access for prod -> test"
   type        = string
 }
@@ -108,7 +108,7 @@ variable "manage_repositories" {
   description = "to let this library to manage directly repository creation"
   type        = string
 }
-variable "nginx" {
+variable "container_env" {
   default     = {}
   description = "dictionary environment variable to use as dynamic hostname for homonym component"
   type        = map(any)
@@ -249,7 +249,7 @@ locals {
       sbt_image_version              = var.sbt_image_version
       task_role_arn                  = local.role_arn_task
       ENV                            = var.deploy_environment
-      nginx                          = var.nginx
+      container_env                  = var.container_env
 
     }
   )

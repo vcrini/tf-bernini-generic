@@ -243,17 +243,17 @@ locals {
       codeartifact_repository = var.codeartifact_repository
       codeartifact_domain     = var.codeartifact_domain
       dockerhub_user          = var.dockerhub_user
-      #ecr_repositories        = local.ecr_repositories
-      environment           = var.deploy_environment
-      image_repo            = local.image_repo
-      image_repo_name       = var.image_repo_name
-      proxy_name            = local.proxy_name
-      repository_name       = local.repository_name
-      s3_aws_access_key_id  = var.s3_aws_access_key_id
-      s3_aws_default_region = local.region
-      s3_aws_role_arn       = var.s3_aws_role_arn
-      sbt_image_version     = var.sbt_image_version
-      sbt_opts              = var.sbt_opts
+      ecr_repositories        = local.ecr_repositories
+      environment             = var.deploy_environment
+      image_repo              = local.image_repo
+      image_repo_name         = var.image_repo_name
+      proxy_name              = local.proxy_name
+      repository_name         = local.repository_name
+      s3_aws_access_key_id    = var.s3_aws_access_key_id
+      s3_aws_default_region   = local.region
+      s3_aws_role_arn         = var.s3_aws_role_arn
+      sbt_image_version       = var.sbt_image_version
+      sbt_opts                = var.sbt_opts
     }
   )
   deploy2_name = local.repository_name_deploy

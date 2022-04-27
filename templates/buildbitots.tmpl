@@ -1,0 +1,75 @@
+version: 0.2
+env:
+  variables:
+    application_name: ${repository_name}
+    codeartifact_repository: ${codeartifact_repository}
+    codeartifact_domain: ${codeartifact_domain}
+    dockerhub_user: ${dockerhub_user}
+    domain_owner: ${codeartifact_account_id}
+    environment: ${environment}
+    image_repo: ${image_repo} 
+    image_repo_name: ${image_repo_name} 
+    proxy_name: ${proxy_name}
+
+  parameter-store:
+    dockerhub_password: bitots-dockerhub-password
+
+phases:
+  pre_build:
+    commands:
+     - export ecr_repositories=(%{ for r in ecr_repositories ~}'${r}' %{ endfor ~})
+     - echo "[ECHO] Running pre_build STEP at $(date)"
+     - git clone https://github.com/vcrini/aws-utilities  -b 1.0   --depth=1 utilities
+     - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+     - docker login --username $dockerhub_user --password $dockerhub_password
+     - app_image_version=v`grep -Po '(?<=^version=).+' build.txt`
+     - ecr_urls=()
+     - |
+       echo "before"
+       echo $${ecr_repositories[0]}
+       echo "after"
+       for ((i=0; i<$${#ecr_repositories[@]}; i++))
+       do
+         echo "ecr $${ecr_repositories[$i]}:"
+         repo=`utilities/ecr_image_check.sh $image_repo $${ecr_repositories[$i]} $app_image_version`
+         echo "repo->$repo"
+         image_version=`utilities/remove_snapshot.sh $app_image_version` 
+         echo "image_version->$image_version"
+         repo=$repo:$app_image_version
+         echo "repo->$repo"
+         ecr_urls+=($repo)
+         docker pull $repo || true
+       done
+       export ecr_urls
+       echo $${ecr_urls[0]}
+  build:
+    commands:
+      - | 
+        BUILDS=("docker build -t $${ecr_urls[0]} --build-arg keytab_filename --cache-from  $${ecr_urls[0]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[1]} --build-arg=SERVER_NAME --build-arg=BACKEND_CONTAINER --cache-from $${ecr_urls[1]} --file nginx/Dockerfile ." "docker build -t $${ecr_urls[2]} --build-arg keytab_filename --cache-from  $${ecr_urls[2]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[3]}  --cache-from  $${ecr_urls[3]} --file frontend/Dockerfile frontend")
+        for ((i=0; i<$${#BUILDS[@]}; i++))
+        do 
+          echo $${BUILDS[$i]}
+          eval $${BUILDS[$i]} 
+        done
+
+  post_build:
+    commands:
+      - echo "[ECHO] Running post_build STEP at $(date)"
+      - |  
+        echo $${ecr_urls[0]}
+        for ((i=0; i<$${#ecr_urls[@]}; i++))
+        do 
+         echo "[ECHO] Docker push image $${ecr_urls[$i]}"
+         docker push $${ecr_urls[$i]}
+        done 
+
+      - help1="paste following content in 'imagedefinitions.json' inside repository '%s' if not present\n" 
+      - printf '[{"name":"app","imageUri":"%s"},{"name":"web","imageUri":"%s"},{"name":"crono","imageUri":"%s"},{"name":"frontend","imageUri":"%s"}]' $${ecr_urls[0]} $${ecr_urls[1]} $${ecr_urls[2]} $${ecr_urls[3]} | python -m json.tool
+      - printf 'app=%s' $${ecr_urls[1]} > tag
+artifacts:
+    files: 
+      - build.txt
+      - docker-compose.aws.yml
+      - docker-compose.yml
+      - ecs-params.yml
+      - tag

@@ -26,12 +26,35 @@ variable "additional_ecr_repos" {
   description = "used to create ECR infrastructure if there is more than one"
   type        = list(any)
 }
+variable "build_template_name" {
+  default     = "buildspec"
+  description = "build template name read from template and autmatically added tmpl extension"
+}
+variable "deploy_template_name" {
+  default     = "deployspec"
+  description = "deploy template name read from template and autmatically added tmpl extension"
+}
 variable "force_approve" {
   type        = string
   default     = "false"
   description = "if false than an approve is requested, otherwise there is no approve phase after build and before deploy"
 }
 
+variable "role_arn_codebuild" {
+  default     = ""
+  description = "full role to pass if naming convention is not standard"
+  type        = string
+}
+variable "role_arn_codepipeline" {
+  default     = ""
+  description = "full role to pass if naming convention is not standard"
+  type        = string
+}
+variable "role_arn_source" {
+  default     = ""
+  description = "used to allow production to trigger in test events"
+  type        = string
+}
 variable "role_arn_source_name" {
   default     = "assumecodecommitguccidev"
   description = "used to allow production to trigger in test events"
@@ -139,6 +162,11 @@ variable "role_arn_codepipeline_name" {
   description = "role used by codepipeline"
   type        = string
 }
+variable "role_arn_task" {
+  default     = ""
+  description = "full role used by container to pass if naming convention is not standard"
+  type        = string
+}
 variable "role_arn_task_name" {
   default     = "dpl-task-role"
   description = "role used by container"
@@ -204,30 +232,32 @@ locals {
   role_arn2             = "${local.role_prefix2}${var.deploy_role}"
   role_arn_target       = "${local.role_prefix}${var.prefix}-start-pipeline-automation"
   role_arn_target2      = "${local.role_prefix2}${var.prefix}-start-pipeline-automation"
-  role_arn_task         = "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
-  role_arn_codebuild    = "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
-  role_arn_codepipeline = "${local.role_prefix}${var.role_arn_codepipeline_name}"
-  role_arn_source       = "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
-  buildspec = templatefile("${path.module}/templates/buildspec.tmpl",
+  role_arn_task         = var.role_arn_task != "" ? "${var.role_arn_task}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
+  role_arn_codebuild    = var.role_arn_codebuild != "" ? "${var.role_arn_codebuild}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
+  role_arn_codepipeline = var.role_arn_codepipeline != "" ? "${var.role_arn_codepipeline}" : "${local.role_prefix}${var.role_arn_codepipeline_name}"
+  role_arn_source       = var.role_arn_source != "" ? "${var.role_arn_source}" : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
+  #buildspec = var.build_template != "" ? var.build_template :  templatefile("${path.module}/templates/buildspec.tmpl",
+  buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       codeartifact_account_id = var.codeartifact_account_id
       codeartifact_repository = var.codeartifact_repository
       codeartifact_domain     = var.codeartifact_domain
       dockerhub_user          = var.dockerhub_user
-      environment             = var.deploy_environment
-      image_repo              = local.image_repo
-      image_repo_name         = var.image_repo_name
-      proxy_name              = local.proxy_name
-      repository_name         = local.repository_name
-      s3_aws_access_key_id    = var.s3_aws_access_key_id
-      s3_aws_default_region   = local.region
-      s3_aws_role_arn         = var.s3_aws_role_arn
-      sbt_image_version       = var.sbt_image_version
-      sbt_opts                = var.sbt_opts
+      #ecr_repositories        = local.ecr_repositories
+      environment           = var.deploy_environment
+      image_repo            = local.image_repo
+      image_repo_name       = var.image_repo_name
+      proxy_name            = local.proxy_name
+      repository_name       = local.repository_name
+      s3_aws_access_key_id  = var.s3_aws_access_key_id
+      s3_aws_default_region = local.region
+      s3_aws_role_arn       = var.s3_aws_role_arn
+      sbt_image_version     = var.sbt_image_version
+      sbt_opts              = var.sbt_opts
     }
   )
   deploy2_name = local.repository_name_deploy
-  deployspec = templatefile("${path.module}/templates/deployspec.tmpl",
+  deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
       aws_container_name             = var.target_group["app"]["container"]
       aws_container_port             = var.target_group["app"]["destination_port"]

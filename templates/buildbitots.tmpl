@@ -10,24 +10,27 @@ env:
     image_repo: ${image_repo} 
     image_repo_name: ${image_repo_name} 
     proxy_name: ${proxy_name}
+    %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
+    %{ endfor ~}
 
   parameter-store:
     dockerhub_password: bitots-dockerhub-password
 
+  exported-variables:
+    %{ for config_key, config_value in container_env }- ${config_key}
+    %{ endfor ~}
+
 phases:
   pre_build:
     commands:
-     - export ecr_repositories=(%{ for r in ecr_repositories ~}'${r}' %{ endfor ~})
      - echo "[ECHO] Running pre_build STEP at $(date)"
+     - export ecr_repositories=(%{ for r in ecr_repositories ~}'${r}' %{ endfor ~})
      - git clone https://github.com/vcrini/aws-utilities  -b 1.0   --depth=1 utilities
      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
      - docker login --username $dockerhub_user --password $dockerhub_password
      - app_image_version=v`grep -Po '(?<=^version=).+' build.txt`
      - ecr_urls=()
      - |
-       echo "before"
-       echo $${ecr_repositories[0]}
-       echo "after"
        for ((i=0; i<$${#ecr_repositories[@]}; i++))
        do
          echo "ecr $${ecr_repositories[$i]}:"
@@ -45,7 +48,7 @@ phases:
   build:
     commands:
       - | 
-        BUILDS=("docker build -t $${ecr_urls[0]} --build-arg keytab_filename --cache-from  $${ecr_urls[0]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[1]} --build-arg=SERVER_NAME --build-arg=BACKEND_CONTAINER --cache-from $${ecr_urls[1]} --file nginx/Dockerfile ." "docker build -t $${ecr_urls[2]} --build-arg keytab_filename --cache-from  $${ecr_urls[2]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[3]}  --cache-from  $${ecr_urls[3]} --file frontend/Dockerfile frontend")
+        BUILDS=("docker build -t $${ecr_urls[0]} --build-arg keytab_filename --cache-from  $${ecr_urls[0]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[1]} --build-arg SERVER_NAME --build-arg BACKEND_CONTAINER --cache-from $${ecr_urls[1]} --file nginx/Dockerfile ." "docker build -t $${ecr_urls[2]} --build-arg keytab_filename --cache-from  $${ecr_urls[2]} --file backend/Dockerfile.crono ." "docker build -t $${ecr_urls[3]}  --build-arg REACT_APP_API_URL --build-arg REACT_APP_ME_ENDPOINT --build-arg REACT_APP_API_VERSION --build-arg REACT_APP_OPENID_URL --build-arg REACT_APP_TEST_ENVIRONMENT --cache-from  $${ecr_urls[3]} --file frontend/Dockerfile frontend")
         for ((i=0; i<$${#BUILDS[@]}; i++))
         do 
           echo $${BUILDS[$i]}

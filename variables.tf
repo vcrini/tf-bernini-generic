@@ -136,6 +136,11 @@ variable "container_env" {
   description = "dictionary environment variable to use as dynamic hostname for homonym component"
   type        = map(any)
 }
+variable "container_env2" {
+  default     = {}
+  description = "dictionary environment variable to use as dynamic hostname for homonym component"
+  type        = map(any)
+}
 variable "prefix" {
   description = "prefix name for infrastructure, ex. fdh, dpl, bitots"
   type        = string
@@ -240,8 +245,9 @@ locals {
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       codeartifact_account_id = var.codeartifact_account_id
-      codeartifact_repository = var.codeartifact_repository
       codeartifact_domain     = var.codeartifact_domain
+      codeartifact_repository = var.codeartifact_repository
+      container_env           = merge(var.container_env, var.container_env2)
       dockerhub_user          = var.dockerhub_user
       ecr_repositories        = local.ecr_repositories
       environment             = var.deploy_environment
@@ -259,17 +265,20 @@ locals {
   deploy2_name = local.repository_name_deploy
   deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
+      ENV                            = var.deploy_environment
       aws_container_name             = var.target_group["app"]["container"]
       aws_container_port             = var.target_group["app"]["destination_port"]
       aws_desired_count              = var.aws_desired_count
       aws_ecs_cluster                = var.aws_ecs_cluster
-      aws_service_name               = local.repository_name
       aws_security_group             = var.aws_security_group
+      aws_service_name               = local.repository_name
       aws_stream_prefix              = local.repository_name
       aws_subnet                     = var.aws_subnet
       aws_target_group_arn           = module.balancer.output_lb_target_group["app"].arn
+      container_env                  = merge(var.container_env, var.container_env2)
       deployment_max_percent         = var.deployment_max_percent
       deployment_min_healthy_percent = var.deployment_min_healthy_percent
+      ecr_repositories               = local.ecr_repositories
       ecs_image_pull_behavior        = var.ecs_image_pull_behavior
       environment                    = var.deploy_environment
       image_repo                     = local.image_repo
@@ -278,8 +287,6 @@ locals {
       repository_name                = local.repository_name
       sbt_image_version              = var.sbt_image_version
       task_role_arn                  = local.role_arn_task
-      ENV                            = var.deploy_environment
-      container_env                  = var.container_env
 
     }
   )

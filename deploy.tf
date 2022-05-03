@@ -40,7 +40,7 @@ module "ecr_mutable" {
             }
         }    
       ]
-}
+ }
 EOF
   source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.4.0"
 }
@@ -63,8 +63,8 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.0.0"
+  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.1.0"
 }
 
 resource "aws_cloudwatch_log_group" "log" {
@@ -84,7 +84,7 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   #source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
-  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.0.2"
+  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.1.0"
   ssl_certificate_arn = local.ssl_certificate_arn
   target_group        = var.target_group
   vpc_id              = var.vpc_id

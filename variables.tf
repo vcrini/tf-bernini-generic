@@ -262,19 +262,18 @@ locals {
       sbt_opts                = var.sbt_opts
     }
   )
-  deploy2_name = local.repository_name_deploy
+  deploy2_name         = local.repository_name_deploy
+  target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer.output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]
   deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
       ENV                            = var.deploy_environment
-      aws_container_name             = var.target_group["app"]["container"]
-      aws_container_port             = var.target_group["app"]["destination_port"]
+      target_group_ecs_cli           = local.target_group_ecs_cli
       aws_desired_count              = var.aws_desired_count
       aws_ecs_cluster                = var.aws_ecs_cluster
       aws_security_group             = var.aws_security_group
       aws_service_name               = local.repository_name
       aws_stream_prefix              = local.repository_name
       aws_subnet                     = var.aws_subnet
-      aws_target_group_arn           = module.balancer.output_lb_target_group["app"].arn
       container_env                  = merge(var.container_env, var.container_env2)
       deployment_max_percent         = var.deployment_max_percent
       deployment_min_healthy_percent = var.deployment_min_healthy_percent

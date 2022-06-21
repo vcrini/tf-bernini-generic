@@ -14,7 +14,7 @@ env:
     %{ endfor ~}
 
   parameter-store:
-    dockerhub_password: bitots-dockerhub-password
+    dockerhub_password: fdh-dockerhub-password
 
   exported-variables:
     %{ for config_key, config_value in container_env }- ${config_key}
@@ -47,7 +47,7 @@ phases:
   build:
     commands:
       - | 
-        BUILDS=("docker build -t $${ecr_urls[0]} --build-arg keytab_filename --cache-from  $${ecr_urls[0]} --file backend/Dockerfile ." "docker build -t $${ecr_urls[1]} --build-arg SERVER_NAME --build-arg BACKEND_CONTAINER --cache-from $${ecr_urls[1]} --file nginx/Dockerfile ." "docker build -t $${ecr_urls[2]} --build-arg keytab_filename --cache-from  $${ecr_urls[2]} --file backend/Dockerfile.crono ." "docker build -t $${ecr_urls[3]}  --build-arg REACT_APP_API_URL --build-arg REACT_APP_ME_ENDPOINT --build-arg REACT_APP_API_VERSION --build-arg REACT_APP_OPENID_URL --build-arg REACT_APP_TEST_ENVIRONMENT --cache-from  $${ecr_urls[3]} --file frontend/Dockerfile frontend")
+        BUILDS=("docker build -t $${ecr_urls[0]} --build-arg keytab_filename --cache-from  $${ecr_urls[0]} --file build/Dockerfile ." "docker build -t $${ecr_urls[1]} --build-arg SERVER_NAME --build-arg BACKEND_CONTAINER --cache-from $${ecr_urls[1]} --file build/Dockerfile.redis ." )
         for ((i=0; i<$${#BUILDS[@]}; i++))
         do 
           echo $${BUILDS[$i]}
@@ -66,12 +66,13 @@ phases:
         done 
 
       - help1="paste following content in 'imagedefinitions.json' inside repository '%s' if not present\n" 
-      - printf '[{"name":"app","imageUri":"%s"},{"name":"web","imageUri":"%s"},{"name":"crono","imageUri":"%s"},{"name":"frontend","imageUri":"%s"}]' $${ecr_urls[0]} $${ecr_urls[1]} $${ecr_urls[2]} $${ecr_urls[3]} | python -m json.tool
+      - printf '[{"name":"dondit-site","imageUri":"%s"},{"name":"redis","imageUri":"%s"}]' $${ecr_urls[0]} $${ecr_urls[1]} | python -m json.tool
       - printf 'app=%s' $${ecr_urls[1]} > tag
 artifacts:
     files: 
       - build.txt
-      - docker-compose.aws.yml
-      - docker-compose.yml
-      - ecs-params.yml
+      - build/docker-compose.aws.yml
+      - build/docker-compose.yml
+      - build/ecs-params.yml
+      - build/.env*
       - tag

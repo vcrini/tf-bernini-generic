@@ -84,7 +84,7 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   #source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
-  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.1.0"
+  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.2.0"
   ssl_certificate_arn = local.ssl_certificate_arn
   target_group        = var.target_group
   vpc_id              = var.vpc_id

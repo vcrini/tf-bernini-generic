@@ -45,7 +45,7 @@ EOF
   source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.4.0"
 }
 module "deploy" {
-  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
   cluster_name            = var.aws_ecs_cluster
@@ -63,8 +63,7 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.1.0"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.1.0"
 }
 
 resource "aws_cloudwatch_log_group" "log" {
@@ -74,18 +73,19 @@ resource "aws_cloudwatch_log_group" "log" {
 }
 
 module "balancer" {
+  #source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
   alarm_arn            = var.alarm_arn
+  count                = var.lb_name == null ? 0 : 1
   default_cname        = var.default_cname
   deploy_environment   = var.deploy_environment
-  repository_name      = local.repository_name
   deregistration_delay = 120
-  listener             = var.listener
   lb_name              = var.lb_name
+  listener             = var.listener
   nlb_name             = var.nlb_name
   prefix               = var.prefix
-  #source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
-  source              = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.2.0"
-  ssl_certificate_arn = local.ssl_certificate_arn
-  target_group        = var.target_group
-  vpc_id              = var.vpc_id
+  repository_name      = local.repository_name
+  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.2.0"
+  ssl_certificate_arn  = local.ssl_certificate_arn
+  target_group         = var.target_group
+  vpc_id               = var.vpc_id
 }

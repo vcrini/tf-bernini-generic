@@ -241,7 +241,6 @@ locals {
   role_arn_codebuild    = var.role_arn_codebuild != "" ? "${var.role_arn_codebuild}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
   role_arn_codepipeline = var.role_arn_codepipeline != "" ? "${var.role_arn_codepipeline}" : "${local.role_prefix}${var.role_arn_codepipeline_name}"
   role_arn_source       = var.role_arn_source != "" ? "${var.role_arn_source}" : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
-  #buildspec = var.build_template != "" ? var.build_template :  templatefile("${path.module}/templates/buildspec.tmpl",
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       codeartifact_account_id = var.codeartifact_account_id

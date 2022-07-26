@@ -262,7 +262,7 @@ locals {
     }
   )
   deploy2_name         = local.repository_name_deploy
-  target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer.output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]
+  target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer[0].output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]
   deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
       ENV                            = var.deploy_environment

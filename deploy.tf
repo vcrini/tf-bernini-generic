@@ -53,7 +53,7 @@ module "deploy" {
   deploy_environment      = var.deploy_environment
   deployspec              = local.deployspec
   force_approve           = var.force_approve
-  image                   = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+  image                   = "aws/codebuild/standard:6.0"
   kms_arn                 = var.kms_arn
   poll_for_source_changes = "false"
   prefix                  = var.prefix

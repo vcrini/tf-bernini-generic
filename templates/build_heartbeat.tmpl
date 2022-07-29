@@ -2,6 +2,7 @@ version: 0.2
 env:
   variables:
     account_id: ${account_id}
+    build_template_name: ${build_template_name}
     dockerhub_user: ${dockerhub_user}
     ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
     environment: ${environment}
@@ -15,9 +16,8 @@ phases:
   build:
     commands:
       - echo "[ECHO] Running pre_build STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b migration   --depth=1 utilities
-      - ls -l utilities/codebuild/
-      - utilities/codebuild/build_heartbeat.sh
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.1   --depth=1 utilities
+      - bash -ex utilities/codebuild/$build_template_name.sh
 
 artifacts:
     files:

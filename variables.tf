@@ -244,6 +244,7 @@ locals {
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       account_id              = local.account_id
+      build_template_name     = var.build_template_name
       codeartifact_account_id = var.codeartifact_account_id
       codeartifact_domain     = var.codeartifact_domain
       codeartifact_repository = var.codeartifact_repository
@@ -277,6 +278,7 @@ locals {
       container_env                  = merge(var.container_env, var.container_env2)
       deployment_max_percent         = var.deployment_max_percent
       deployment_min_healthy_percent = var.deployment_min_healthy_percent
+      deploy_template_name           = var.deploy_template_name
       ecr_repositories               = local.ecr_repositories
       ecs_image_pull_behavior        = var.ecs_image_pull_behavior
       environment                    = var.deploy_environment

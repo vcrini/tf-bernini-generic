@@ -269,6 +269,7 @@ locals {
     {
       ENV                            = var.deploy_environment
       target_group_ecs_cli           = local.target_group_ecs_cli
+      target_group_ecs_cli_string    = join(";", local.target_group_ecs_cli)
       aws_desired_count              = var.aws_desired_count
       aws_ecs_cluster                = var.aws_ecs_cluster
       aws_security_group             = var.aws_security_group

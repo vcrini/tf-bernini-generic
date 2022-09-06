@@ -1,0 +1,37 @@
+version: 0.2
+env:
+  variables:
+    account_id: ${account_id}
+    build_template_name: ${build_template_name}
+    dockerhub_user: ${dockerhub_user}
+    ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
+    environment: ${environment}
+    image_repo: ${image_repo} 
+    image_repo_name: ${image_repo_name}
+    proxy_name: ${proxy_name}
+    s3_aws_access_key_id: ${s3_aws_access_key_id}
+    s3_aws_default_region: ${s3_aws_default_region}
+    s3_aws_role_arn: ${s3_aws_role_arn}
+    sbt_image_version: ${sbt_image_version}
+    sbt_opts: ${sbt_opts}
+  parameter-store:
+    dockerhub_password: bitgdi-dockerhub-password
+    s3_sakey: "bitgdi-s3-sbt-key"
+
+phases:
+  build:
+    commands:
+      - echo "[ECHO] Running pre_build STEP at $(date)"
+      - git clone https://github.com/vcrini/aws-utilities  -b migration   --depth=1 utilities
+      - bash -ex utilities/codebuild/$build_template_name.sh
+artifacts:
+    files: 
+      - target/docker/stage/*
+      - build.sbt
+      - proxy_version.txt
+cache:
+  paths:
+    - '/root/.m2/**/*'
+    - '/root/.sbt/**/*'
+    - '/root/.ivy2/**/*'
+

@@ -1,0 +1,35 @@
+version: 0.2
+env:
+  variables:
+    account_id: ${account_id}
+    build_template_name: ${build_template_name}
+    dockerhub_user: ${dockerhub_user}
+    ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
+    environment: ${environment}
+    image_repo: ${image_repo} 
+    image_repo_name: ${image_repo_name}
+    proxy_name: ${proxy_name}
+    %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
+    %{ endfor ~}
+
+  parameter-store:
+    dockerhub_password: bitots-dockerhub-password
+
+  exported-variables:
+    %{ for config_key, config_value in container_env }- ${config_key}
+    %{ endfor ~}
+
+phases:
+  build:
+    commands:
+      - echo "[ECHO] Running pre_build STEP at $(date)"
+      - git clone https://github.com/vcrini/aws-utilities  -b migration   --depth=1 utilities
+      - bash -ex utilities/codebuild/$build_template_name.sh
+artifacts:
+    files: 
+      - build.txt
+      - docker-compose.aws.yml
+      - docker-compose.yml
+      - ecs-params.yml
+      - tag
+

@@ -13,7 +13,7 @@ env:
     s3_aws_default_region: ${s3_aws_default_region}
     s3_aws_role_arn: ${s3_aws_role_arn}
     sbt_image_version: ${sbt_image_version}
-    sbt_opts: ${sbt_opts}
+    SBT_OPTS: ${sbt_opts}
   parameter-store:
     dockerhub_password: bitgdi-dockerhub-password
     s3_sakey: "bitgdi-s3-sbt-key"
@@ -22,7 +22,7 @@ phases:
   build:
     commands:
       - echo "[ECHO] Running pre_build STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.3.1   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.3.2   --depth=1 utilities
       - bash -ex utilities/codebuild/$build_template_name.sh
 artifacts:
     files: 

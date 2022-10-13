@@ -237,7 +237,7 @@ locals {
   role_arn2             = "${local.role_prefix2}${var.deploy_role}"
   role_arn_target       = "${local.role_prefix}${var.prefix}-start-pipeline-automation"
   role_arn_target2      = "${local.role_prefix2}${var.prefix}-start-pipeline-automation"
-  role_arn_task         = var.role_arn_task != "" ? "${var.role_arn_task}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
+  role_arn_task         = var.role_arn_task_name != "" ? "${local.role_prefix}${var.prefix}-${var.deploy_environment}-${var.role_arn_task_name}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
   role_arn_codebuild    = var.role_arn_codebuild != "" ? "${var.role_arn_codebuild}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
   role_arn_codepipeline = var.role_arn_codepipeline != "" ? "${var.role_arn_codepipeline}" : "${local.role_prefix}${var.role_arn_codepipeline_name}"
   role_arn_source       = var.role_arn_source != "" ? "${var.role_arn_source}" : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"

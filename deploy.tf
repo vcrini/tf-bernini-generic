@@ -73,7 +73,7 @@ resource "aws_cloudwatch_log_group" "log" {
 }
 
 module "balancer" {
-  #source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
+  source               = "/Users/vcrini/Repositories/terraform-modules//load_balancer"
   alarm_arn            = var.alarm_arn
   count                = var.lb_name == null ? 0 : 1
   default_cname        = var.default_cname
@@ -84,8 +84,26 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   repository_name      = local.repository_name
-  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.2.0"
-  ssl_certificate_arn  = local.ssl_certificate_arn
-  target_group         = var.target_group
-  vpc_id               = var.vpc_id
+  #source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.2.0"
+  ssl_certificate_arn = local.ssl_certificate_arn
+  target_group        = var.target_group
+  vpc_id              = var.vpc_id
 }
+module "apigateway" {
+  count              = var.create_api ? 1 : 0
+  api_id             = var.api_id
+  deploy_environment = var.deploy_environment
+  repository_name    = local.repository_name
+  listener_arn       = "to remove"
+  #listener_arn         = module.balancer.output_lb_listener["18601"].arn
+  lb_name = var.lb_name
+  source  = "/Users/vcrini/Repositories/terraform-modules//tf-apigateway"
+  #  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.0.1"
+  # ssl_certificate_arn = local.ssl_certificate_arn
+  tags        = var.tag
+  vpc_id      = var.vpc_id
+  vpc_link_id = var.vpc_link_id
+  # zone_id             = var.zone_id
+}
+
+

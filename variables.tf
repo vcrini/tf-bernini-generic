@@ -1,3 +1,8 @@
+variable "api_id" {
+  default     = ""
+  description = "id for the reply's created api"
+  type        = string
+}
 variable "aws_ecs_cluster" {
   description = "cluster name"
   type        = string
@@ -30,6 +35,12 @@ variable "build_template_name" {
   default     = "buildspec"
   description = "build template name read from template and autmatically added tmpl extension"
 }
+variable "create_api" {
+  default     = false
+  description = "to activate or not api gateway section"
+  type        = string
+}
+
 variable "deploy_template_name" {
   default     = "deployspec"
   description = "deploy template name read from template and autmatically added tmpl extension"
@@ -214,6 +225,11 @@ variable "tag_alt" {
   }
   description = "tag to be added with the alternative account a.k.a prod one"
   type        = map(any)
+}
+variable "vpc_link_id" {
+  type        = string
+  default     = ""
+  description = "virtual private cloud descriptor"
 }
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}

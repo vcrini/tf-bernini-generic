@@ -1,7 +1,7 @@
-variable "api_id" {
-  default     = ""
-  description = "id for the reply's created api"
-  type        = string
+variable "api_gateway" {
+  default     = null
+  description = "values passed to setup api endpoint"
+  type        = any
 }
 variable "aws_ecs_cluster" {
   description = "cluster name"
@@ -20,7 +20,6 @@ variable "aws_account_id2" {
   description = "needed for creating role to create infrastructure for codecommit in prod enviroment"
   type        = string
 }
-
 variable "aws_desired_count" {
   default     = 1
   description = "how many tasks run"
@@ -34,11 +33,6 @@ variable "additional_ecr_repos" {
 variable "build_template_name" {
   default     = "buildspec"
   description = "build template name read from template and autmatically added tmpl extension"
-}
-variable "cognito_name" {
-  default     = null
-  description = "name of cognito authorizer"
-  type        = string
 }
 variable "create_api" {
   default     = false

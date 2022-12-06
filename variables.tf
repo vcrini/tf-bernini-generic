@@ -35,6 +35,11 @@ variable "build_template_name" {
   default     = "buildspec"
   description = "build template name read from template and autmatically added tmpl extension"
 }
+variable "cognito_name" {
+  default     = null
+  description = "name of cognito authorizer"
+  type        = string
+}
 variable "create_api" {
   default     = false
   description = "to activate or not api gateway section"

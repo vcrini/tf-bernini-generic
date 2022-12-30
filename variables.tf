@@ -44,6 +44,16 @@ variable "deploy_template_name" {
   default     = "deployspec"
   description = "deploy template name read from template and autmatically added tmpl extension"
 }
+variable "dockerfile_contexts" {
+  default     = ["."]
+  description = "default dockerfile name"
+  type        = list(any)
+}
+variable "dockerfile_paths" {
+  default     = ["Dockerfile"]
+  description = "default dockerfile name"
+  type        = list(any)
+}
 variable "force_approve" {
   type        = string
   default     = "false"
@@ -244,7 +254,7 @@ locals {
 }
 locals {
   arn_target       = "arn:aws:events:${local.region}:${local.account_id}:event-bus/default"
-  ecr_repositories = compact(concat([local.repository_name], formatlist("%s-%s", local.repository_name, var.additional_ecr_repos)))
+  ecr_repositories = compact(concat([local.repository_name], formatlist("%s_%s", local.repository_name, var.additional_ecr_repos)))
 
   image_repo            = "${local.account_id}.dkr.ecr.${local.region}.amazonaws.com/"
   key                   = "terraform/tfstate/$(local.repository_name).tfstate"
@@ -265,6 +275,8 @@ locals {
       codeartifact_repository = var.codeartifact_repository
       container_env           = merge(var.container_env, var.container_env2)
       dockerhub_user          = var.dockerhub_user
+      dockerfile_paths        = var.dockerfile_paths
+      dockerfile_contexts     = var.dockerfile_contexts
       ecr_repositories        = local.ecr_repositories
       environment             = var.deploy_environment
       image_repo              = local.image_repo

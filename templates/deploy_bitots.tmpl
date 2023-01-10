@@ -12,13 +12,13 @@ env:
     ECS_IMAGE_PULL_BEHAVIOR: ${ecs_image_pull_behavior}
     TASK_ROLE_ARN: ${task_role_arn}
     deploy_template_name: ${deploy_template_name}
-    ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
+    ECR: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
     application_name: ${repository_name}
     environment: ${environment}
-    image_repo: ${image_repo} 
+    IMAGE_REPO: ${image_repo} 
     image_repo_name: ${image_repo_name} 
     ENV: ${environment}
-    target_group_ecs_cli_string: ${target_group_ecs_cli_string}
+    TARGET_GROUP_ECS_CLI_STRING: ${target_group_ecs_cli_string}
     %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
     %{ endfor ~}
 
@@ -31,5 +31,5 @@ phases:
   build:
     commands:
       - echo "[ECHO] deploying STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.3.0.1   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.6.0 --depth=1 utilities
       - bash -xe utilities/codebuild/$deploy_template_name.sh

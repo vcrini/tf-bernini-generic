@@ -20,7 +20,7 @@ module "ecr_immutable" {
 }
 EOF
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.5.0"
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.6.1"
 }
 module "ecr_mutable" {
   name   = formatlist("%s-%s", local.ecr_repositories, "snapshot")
@@ -42,14 +42,13 @@ module "ecr_mutable" {
       ]
  }
 EOF
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.5.0"
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.6.1"
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {
   #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
-  cluster_name            = var.aws_ecs_cluster
   codepipeline_bucket     = var.codepipeline_bucket
   deploy_environment      = var.deploy_environment
   deployspec              = local.deployspec
@@ -59,12 +58,11 @@ module "deploy" {
   poll_for_source_changes = "false"
   prefix                  = var.prefix
   repository_name         = local.repository_name
-  role_arn                = local.role_arn
   role_arn_codebuild      = local.role_arn_codebuild
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.1.0"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.2.0"
 }
 
 resource "aws_cloudwatch_log_group" "log" {
@@ -85,9 +83,9 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   repository_name      = local.repository_name
-  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.4.0"
+  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.5.0"
   ssl_certificate_arn  = local.ssl_certificate_arn
-  ssl_policy           = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  ssl_policy           = var.ssl_policy
   target_group         = var.target_group
   vpc_id               = var.vpc_id
 }

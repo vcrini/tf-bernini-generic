@@ -24,6 +24,11 @@ variable "listener" {
   description = "map representing listener configuration"
   type        = map(any)
 }
+variable "ssl_policy" {
+  default     = "ELBSecurityPolicy-2016-08"
+  description = "support for specific TLS versions, default one supports older on (1.0+)"
+  type        = string
+}
 variable "ssl_certificate_arn_name" {
   default     = ""
   description = "ssl certificate used by  listener if HTTPS"

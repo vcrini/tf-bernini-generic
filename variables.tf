@@ -33,6 +33,7 @@ variable "additional_ecr_repos" {
 variable "build_template_name" {
   default     = "buildspec"
   description = "build template name read from template and autmatically added tmpl extension"
+  type        = string
 }
 variable "create_api" {
   default     = false
@@ -41,8 +42,8 @@ variable "create_api" {
 }
 
 variable "deploy_template_name" {
-  default     = "deployspec"
   description = "deploy template name read from template and autmatically added tmpl extension"
+  type        = string
 }
 variable "dockerfile_contexts" {
   default     = ["."]
@@ -116,6 +117,7 @@ variable "deploy_environment" {
 variable "deploy_role" {
   default     = "dpl-admin-role"
   description = "role used to deploy"
+  type        = string
 }
 variable "deployment_max_percent" {
   default     = 100
@@ -127,15 +129,6 @@ variable "deployment_min_healthy_percent" {
   description = "to deploy without use more cluster capacity"
   type        = number
 }
-variable "deploy_versions" {
-  default     = true
-  description = "enables deploying specific versions through dedicated pipeline"
-  type        = string
-}
-variable "enable_cross_account" {
-  description = "flag to install accordingly to environment cross notifies between AWS accounts"
-  type        = string
-}
 variable "image_repo_name" {
   default     = "fdh-sbt"
   description = "name of repository with sbt builder image"
@@ -144,11 +137,6 @@ variable "image_repo_name" {
 variable "kms_arn" {
   default     = "arn:aws:kms:eu-west-1:796341525871:key/e9141a5d-f993-464d-af9e-82f5272c85f9"
   description = "kms keys used to crypt bucket to enable cross account access for prod -> test"
-  type        = string
-}
-variable "manage_repositories" {
-  default     = "false"
-  description = "to let this library to manage directly repository creation"
   type        = string
 }
 variable "container_env" {
@@ -228,44 +216,25 @@ variable "tag" {
   description = "tag to be added"
   type        = map(any)
 }
-variable "tag_alt" {
-  default = {
-    Project = "FactoryDataHub"
-  }
-  description = "tag to be added with the alternative account a.k.a prod one"
-  type        = map(any)
-}
-variable "vpc_link_id" {
-  type        = string
-  default     = ""
-  description = "virtual private cloud descriptor"
-}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 locals {
-  account_id             = data.aws_caller_identity.current.account_id
-  proxy_name             = "${local.repository_name}-proxy"
-  region                 = data.aws_region.current.name
-  repository_name        = var.repository_name
-  repository_name_deploy = "${local.repository_name}-deploy"
+  account_id      = data.aws_caller_identity.current.account_id
+  proxy_name      = "${local.repository_name}-proxy"
+  region          = data.aws_region.current.name
+  repository_name = var.repository_name
 
   role_prefix  = "arn:aws:iam::${local.account_id}:role/"
   role_prefix2 = "arn:aws:iam::${var.aws_account_id2}:role/"
 }
 locals {
-  arn_target       = "arn:aws:events:${local.region}:${local.account_id}:event-bus/default"
   ecr_repositories = compact(concat([local.repository_name], formatlist("%s_%s", local.repository_name, var.additional_ecr_repos)))
 
   image_repo            = "${local.account_id}.dkr.ecr.${local.region}.amazonaws.com/"
-  key                   = "terraform/tfstate/$(local.repository_name).tfstate"
-  role_arn              = "${local.role_prefix}${var.deploy_role}"
-  role_arn2             = "${local.role_prefix2}${var.deploy_role}"
-  role_arn_target       = "${local.role_prefix}${var.prefix}-start-pipeline-automation"
-  role_arn_target2      = "${local.role_prefix2}${var.prefix}-start-pipeline-automation"
   role_arn_task         = var.role_arn_task != "" ? var.role_arn_task : var.role_arn_task_name != "" ? "${local.role_prefix}${var.prefix}-${var.deploy_environment}-${var.role_arn_task_name}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-task"
-  role_arn_codebuild    = var.role_arn_codebuild != "" ? "${var.role_arn_codebuild}" : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
-  role_arn_codepipeline = var.role_arn_codepipeline != "" ? "${var.role_arn_codepipeline}" : "${local.role_prefix}${var.role_arn_codepipeline_name}"
-  role_arn_source       = var.role_arn_source != "" ? "${var.role_arn_source}" : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
+  role_arn_codebuild    = var.role_arn_codebuild != "" ? var.role_arn_codebuild : "${local.role_prefix}${var.prefix}-${var.deploy_environment}-codebuild"
+  role_arn_codepipeline = var.role_arn_codepipeline != "" ? var.role_arn_codepipeline : "${local.role_prefix}${var.role_arn_codepipeline_name}"
+  role_arn_source       = var.role_arn_source != "" ? var.role_arn_source : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       account_id              = local.account_id
@@ -290,7 +259,6 @@ locals {
       sbt_opts                = var.sbt_opts
     }
   )
-  deploy2_name         = local.repository_name_deploy
   target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer[0].output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]
   deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
@@ -319,6 +287,4 @@ locals {
 
     }
   )
-  ecr_repository_list          = [local.repository_name]
-  ecr_repository_list_snapshot = [for name in local.ecr_repository_list : "${name}-snapshot"]
 }

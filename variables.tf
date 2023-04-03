@@ -1,3 +1,8 @@
+variable "artifacts" {
+  default     = ["build.sh"]
+  description = "List of artifact to use during codebuild phase"
+  type        = list(any)
+}
 variable "api_gateway" {
   default     = null
   description = "values passed to setup api endpoint"
@@ -43,6 +48,11 @@ variable "create_api" {
 
 variable "deploy_template_name" {
   description = "deploy template name read from template and autmatically added tmpl extension"
+  type        = string
+}
+variable "dockercompose_path" {
+  default     = "."
+  description = "default dockercompose path"
   type        = string
 }
 variable "dockerfile_contexts" {
@@ -238,6 +248,7 @@ locals {
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
       account_id              = local.account_id
+      artifacts               = var.artifacts
       build_template_name     = var.build_template_name
       codeartifact_account_id = var.codeartifact_account_id
       codeartifact_domain     = var.codeartifact_domain
@@ -275,6 +286,7 @@ locals {
       deployment_max_percent         = var.deployment_max_percent
       deployment_min_healthy_percent = var.deployment_min_healthy_percent
       deploy_template_name           = var.deploy_template_name
+      dockercompose_path             = var.dockercompose_path
       ecr_repositories               = local.ecr_repositories
       ecs_image_pull_behavior        = var.ecs_image_pull_behavior
       environment                    = var.deploy_environment

@@ -9,6 +9,7 @@ env:
     AWS_SUBNET: "${aws_subnet}"
     DEPLOYMENT_MAX_PERCENT: ${deployment_max_percent}
     DEPLOYMENT_MIN_HEALTHY_PERCENT: ${deployment_min_healthy_percent}
+    DOCKERCOMPOSE_PATH: ${dockercompose_path}
     ECS_IMAGE_PULL_BEHAVIOR: ${ecs_image_pull_behavior}
     TASK_ROLE_ARN: ${task_role_arn}
     deploy_template_name: ${deploy_template_name}
@@ -35,5 +36,5 @@ phases:
   build:
     commands:
       - echo "[ECHO] deploying STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.5.0   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.8.0   --depth=1 utilities
       - bash -xe utilities/codebuild/$deploy_template_name.sh

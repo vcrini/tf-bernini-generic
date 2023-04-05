@@ -15,11 +15,12 @@ env:
     %{ endfor ~}
 
   parameter-store:
-    dockerhub_password: bitgdi-dockerhub-password
+    %{ for config_key, config_value in parameter_store }${config_key}: ${config_value} 
+    %{ endfor ~}
 
   exported-variables:
     - account_id
-    %{ for config_key, config_value in container_env }- ${config_key}
+    %{ for config_key, config_value in merge(container_env,parameter_store) ~}- ${config_key }
     %{ endfor ~}
 
 

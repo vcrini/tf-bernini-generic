@@ -1,5 +1,12 @@
 variable "artifacts" {
-  default     = ["build.sh"]
+  default = [
+    "build.sh",
+    "ecs-params.yml",
+    "docker-compose.yml",
+    "docker-compose.aws.yml",
+    "tag",
+  ]
+
   description = "List of artifact to use during codebuild phase"
   type        = list(any)
 }
@@ -159,6 +166,13 @@ variable "container_env2" {
   description = "dictionary environment variable to use as dynamic hostname for homonym component"
   type        = map(any)
 }
+variable "parameter_store" {
+  default = {
+    dockerhub_password : "bitgdi-dockerhub-password"
+  }
+  description = "dictionary of secrets to use as dynamic hostname for homonym component"
+  type        = map(any)
+}
 variable "prefix" {
   description = "prefix name for infrastructure, ex. fdh, dpl, bitots"
   type        = string
@@ -261,6 +275,7 @@ locals {
       environment             = var.deploy_environment
       image_repo              = local.image_repo
       image_repo_name         = var.image_repo_name
+      parameter_store         = var.parameter_store
       proxy_name              = local.proxy_name
       repository_name         = local.repository_name
       s3_aws_access_key_id    = var.s3_aws_access_key_id
@@ -292,6 +307,7 @@ locals {
       environment                    = var.deploy_environment
       image_repo                     = local.image_repo
       image_repo_name                = var.image_repo_name
+      parameter_store                = var.parameter_store
       proxy_name                     = local.proxy_name
       repository_name                = local.repository_name
       sbt_image_version              = var.sbt_image_version

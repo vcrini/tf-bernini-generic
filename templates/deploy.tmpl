@@ -23,13 +23,12 @@ env:
     %{ endfor ~}
 
   parameter-store:
-    AWS_METRICBEAT_SECRET_ACCESS_KEY: "bitgdi-aws-metricbeat-secret-access-key"
-    ELASTICSEARCH_CO_PASSWORD: "bitgdi-elasticsearch-co-password"
-    KIBANA_CO_PASSWORD: "bitgdi-kibana-co-password"
+    %{ for config_key, config_value in parameter_store }${config_key}: ${config_value} 
+    %{ endfor ~}
 
   exported-variables:
     - image_repo 
-    %{ for config_key, config_value in container_env }- ${config_key}
+    %{ for config_key, config_value in merge(container_env,parameter_store) ~}- ${config_key }
     %{ endfor ~}
 
 phases:

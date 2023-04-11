@@ -43,7 +43,6 @@ variable "additional_ecr_repos" {
   type        = list(any)
 }
 variable "build_template_name" {
-  default     = "buildspec"
   description = "build template name read from template and autmatically added tmpl extension"
   type        = string
 }
@@ -113,18 +112,6 @@ variable "branch_name" {
 }
 variable "codepipeline_bucket" {
   description = "bucketname used from pipeline to pass configurations needed for codebuild"
-  type        = string
-}
-variable "codeartifact_repository" {
-  description = "repository name for codeartifact"
-  type        = string
-}
-variable "codeartifact_domain" {
-  description = "domain name for codeartifact"
-  type        = string
-}
-variable "codeartifact_account_id" {
-  description = "domain name for codeartifact"
   type        = string
 }
 variable "deploy_environment" {
@@ -261,28 +248,25 @@ locals {
   role_arn_source       = var.role_arn_source != "" ? var.role_arn_source : "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
   buildspec = templatefile("${path.module}/templates/${var.build_template_name}.tmpl",
     {
-      account_id              = local.account_id
-      artifacts               = var.artifacts
-      build_template_name     = var.build_template_name
-      codeartifact_account_id = var.codeartifact_account_id
-      codeartifact_domain     = var.codeartifact_domain
-      codeartifact_repository = var.codeartifact_repository
-      container_env           = merge(var.container_env, var.container_env2)
-      dockerhub_user          = var.dockerhub_user
-      dockerfile_paths        = var.dockerfile_paths
-      dockerfile_contexts     = var.dockerfile_contexts
-      ecr_repositories        = local.ecr_repositories
-      environment             = var.deploy_environment
-      image_repo              = local.image_repo
-      image_repo_name         = var.image_repo_name
-      parameter_store         = var.parameter_store
-      proxy_name              = local.proxy_name
-      repository_name         = local.repository_name
-      s3_aws_access_key_id    = var.s3_aws_access_key_id
-      s3_aws_default_region   = local.region
-      s3_aws_role_arn         = var.s3_aws_role_arn
-      sbt_image_version       = var.sbt_image_version
-      sbt_opts                = var.sbt_opts
+      account_id            = local.account_id
+      artifacts             = var.artifacts
+      build_template_name   = var.build_template_name
+      container_env         = merge(var.container_env, var.container_env2)
+      dockerhub_user        = var.dockerhub_user
+      dockerfile_paths      = var.dockerfile_paths
+      dockerfile_contexts   = var.dockerfile_contexts
+      ecr_repositories      = local.ecr_repositories
+      environment           = var.deploy_environment
+      image_repo            = local.image_repo
+      image_repo_name       = var.image_repo_name
+      parameter_store       = var.parameter_store
+      proxy_name            = local.proxy_name
+      repository_name       = local.repository_name
+      s3_aws_access_key_id  = var.s3_aws_access_key_id
+      s3_aws_default_region = local.region
+      s3_aws_role_arn       = var.s3_aws_role_arn
+      sbt_image_version     = var.sbt_image_version
+      sbt_opts              = var.sbt_opts
     }
   )
   target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer[0].output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]

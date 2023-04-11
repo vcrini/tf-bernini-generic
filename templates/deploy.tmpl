@@ -28,7 +28,7 @@ env:
 
   exported-variables:
     - image_repo 
-    %{ for config_key, config_value in merge(container_env,parameter_store) ~}- ${config_key }
+    %{ for config_key, config_value in container_env ~}- ${config_key }
     %{ endfor ~}
 
 phases:

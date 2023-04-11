@@ -9,16 +9,16 @@ env:
     AWS_SUBNET: "${aws_subnet}"
     DEPLOYMENT_MAX_PERCENT: ${deployment_max_percent}
     DEPLOYMENT_MIN_HEALTHY_PERCENT: ${deployment_min_healthy_percent}
-    DOCKERCOMPOSE_PATH: ${dockercompose_path}
+    DOCKER_COMPOSE_PATH: ${dockercompose_path}
     ECS_IMAGE_PULL_BEHAVIOR: ${ecs_image_pull_behavior}
     TASK_ROLE_ARN: ${task_role_arn}
     deploy_template_name: ${deploy_template_name}
-    ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
+    ECR: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
     environment: ${environment}
-    image_repo: ${image_repo} 
+    IMAGE_REPO: ${image_repo} 
     image_repo_name: ${image_repo_name} 
     proxy_name: ${proxy_name}
-    target_group_ecs_cli_string: ${target_group_ecs_cli_string}
+    TARGET_GROUP_ECS_CLI_STRING: ${target_group_ecs_cli_string}
     %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
     %{ endfor ~}
 
@@ -35,5 +35,5 @@ phases:
   build:
     commands:
       - echo "[ECHO] deploying STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.8.0   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.9.0   --depth=1 utilities
       - bash -xe utilities/codebuild/$deploy_template_name.sh

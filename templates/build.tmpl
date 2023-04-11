@@ -1,14 +1,14 @@
 version: 0.2
 env:
   variables:
-    account_id: ${account_id}
+    ACCOUNT_ID: ${account_id}
     build_template_name: ${build_template_name}
-    dockerhub_user: ${dockerhub_user}
-    ecr: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
-    dockerfile_path: "%{ for r in dockerfile_paths ~}${r},%{ endfor ~}" 
-    dockerfile_context: "%{ for r in dockerfile_contexts ~}${r},%{ endfor ~}" 
+    DOCKERHUB_USER: ${dockerhub_user}
+    ECR: "%{ for r in ecr_repositories ~}${r},%{ endfor ~}"
+    DOCKERFILE_PATH: "%{ for r in dockerfile_paths ~}${r},%{ endfor ~}" 
+    DOCKERFILE_CONTEXT: "%{ for r in dockerfile_contexts ~}${r},%{ endfor ~}" 
     environment: ${environment}
-    image_repo: ${image_repo} 
+    IMAGE_REPO: ${image_repo} 
     image_repo_name: ${image_repo_name}
     proxy_name: ${proxy_name}
     %{ for config_key, config_value in container_env }${config_key}: ${config_value} 
@@ -20,7 +20,7 @@ env:
 
   exported-variables:
     - account_id
-    %{ for config_key, config_value in merge(container_env,parameter_store) ~}- ${config_key }
+    %{ for config_key, config_value in container_env ~}- ${config_key }
     %{ endfor ~}
 
 
@@ -28,7 +28,7 @@ phases:
   build:
     commands:
       - echo "[ECHO] Running pre_build STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.8.0   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.9.0   --depth=1 utilities
       - bash -ex utilities/codebuild/$build_template_name.sh
 
 artifacts:

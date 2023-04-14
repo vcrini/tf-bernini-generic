@@ -161,6 +161,7 @@ variable "parameter_store_default" {
   type        = map(any)
 }
 variable "parameter_store" {
+  default     = {}
   description = "dictionary of secrets to use as dynamic hostname for homonym component"
   type        = map(any)
 }

@@ -35,5 +35,5 @@ phases:
   build:
     commands:
       - echo "[ECHO] deploying STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.9.0   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.9.1   --depth=1 utilities
       - bash -xe utilities/codebuild/$deploy_template_name.sh

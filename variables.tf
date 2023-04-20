@@ -46,6 +46,11 @@ variable "build_template_name" {
   description = "build template name read from template and autmatically added tmpl extension"
   type        = string
 }
+variable "cache" {
+  description = "cache directories during build"
+  default     = []
+  type        = list(any)
+}
 variable "create_api" {
   default     = false
   description = "to activate or not api gateway section"
@@ -256,6 +261,7 @@ locals {
       account_id            = local.account_id
       artifacts             = var.artifacts
       build_template_name   = var.build_template_name
+      cache                 = var.cache
       container_env         = merge(var.container_env, var.container_env2)
       dockerhub_user        = var.dockerhub_user
       dockerfile_paths      = var.dockerfile_paths

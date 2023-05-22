@@ -45,26 +45,23 @@ EOF
   source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.4.0"
 }
 module "deploy" {
-  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
-  cluster_name            = var.aws_ecs_cluster
   codepipeline_bucket     = var.codepipeline_bucket
   deploy_environment      = var.deploy_environment
   deployspec              = local.deployspec
   force_approve           = var.force_approve
-  image                   = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+  image                   = "aws/codebuild/standard:6.0"
   kms_arn                 = var.kms_arn
   poll_for_source_changes = "false"
   prefix                  = var.prefix
   repository_name         = local.repository_name
-  role_arn                = local.role_arn
   role_arn_codebuild      = local.role_arn_codebuild
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
-  source = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.0.0"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.2.0"
 }
 
 resource "aws_cloudwatch_log_group" "log" {

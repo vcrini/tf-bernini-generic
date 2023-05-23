@@ -18,8 +18,7 @@ phases:
     commands:
       - echo "[ECHO] Running pre_build STEP at $(date)"
       - git clone https://github.com/vcrini/aws-utilities  -b 1.0   --depth=1 utilities
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - docker login --username $dockerhub_user --password $dockerhub_password
+      - aws ecr get-login-password  --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin  "$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
       - app_image_version=v`grep -Po '(?<=^version=).+' build.txt`
       - app1_image_version=$app_image_version
       - app_repo=`utilities/ecr_image_check.sh $image_repo $application_name $app_image_version`

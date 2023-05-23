@@ -210,6 +210,7 @@ locals {
   role_arn_source       = "${local.role_prefix2}${var.prefix}-prod-${var.role_arn_source_name}"
   buildspec = templatefile("${path.module}/templates/buildspec.tmpl",
     {
+      account_id              = local.account_id
       codeartifact_account_id = var.codeartifact_account_id
       codeartifact_repository = var.codeartifact_repository
       codeartifact_domain     = var.codeartifact_domain

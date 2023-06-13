@@ -263,6 +263,7 @@ locals {
       build_template_name   = var.build_template_name
       cache                 = var.cache
       container_env         = merge(var.container_env, var.container_env2)
+      dockercompose_path    = var.dockercompose_path
       dockerhub_user        = var.dockerhub_user
       dockerfile_paths      = var.dockerfile_paths
       dockerfile_contexts   = var.dockerfile_contexts

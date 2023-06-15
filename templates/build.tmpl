@@ -29,7 +29,7 @@ phases:
   build:
     commands:
       - echo "[ECHO] Running pre_build STEP at $(date)"
-      - git clone https://github.com/vcrini/aws-utilities  -b 1.10.4   --depth=1 utilities
+      - git clone https://github.com/vcrini/aws-utilities  -b 1.10.5   --depth=1 utilities
       - bash -ex utilities/codebuild/$build_template_name.sh
 
 artifacts:

@@ -1,4 +1,5 @@
 module "ecr_immutable" {
+  force_delete         = var.force_ecr_delete
   image_tag_mutability = "IMMUTABLE"
   name                 = local.ecr_repositories
   policy               = <<EOF
@@ -20,11 +21,12 @@ module "ecr_immutable" {
 }
 EOF
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.7.0"
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.8.0"
 }
 module "ecr_mutable" {
-  name   = formatlist("%s-%s", local.ecr_repositories, "snapshot")
-  policy = <<EOF
+  force_delete = var.force_ecr_delete
+  name         = formatlist("%s-%s", local.ecr_repositories, "snapshot")
+  policy       = <<EOF
 {
     "rules": [
         {
@@ -42,7 +44,7 @@ module "ecr_mutable" {
       ]
  }
 EOF
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.7.0"
+  source       = "git::https://bitbucket.org/valeri0/ecr.git?ref=0.8.0"
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {

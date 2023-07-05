@@ -76,6 +76,11 @@ variable "dockerfile_paths" {
   description = "default dockerfile name"
   type        = list(any)
 }
+variable "force_ecr_delete" {
+  type        = bool
+  default     = true
+  description = "force cancellation even if ecr containers has images"
+}
 variable "force_approve" {
   type        = string
   default     = "false"

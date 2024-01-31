@@ -20,8 +20,8 @@ module "ecr_immutable" {
       ]
 }
 EOF
-  # source               = "/Users/vcrini/Repositories/terraform-modules/ecr"
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.0"
+  #source               = "/Users/vcrini/Repositories/terraform-modules/ecr"
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.1"
 }
 module "ecr_mutable" {
   force_delete = var.force_ecr_delete
@@ -44,11 +44,11 @@ module "ecr_mutable" {
       ]
  }
 EOF
-  source       = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.0"
+  source       = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.1"
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {
-  #source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
   codepipeline_bucket     = var.codepipeline_bucket
@@ -64,7 +64,7 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.6.0"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.6.1"
 }
 #trivy:ignore:AVD-AWS-0017
 resource "aws_cloudwatch_log_group" "log" {
@@ -74,7 +74,7 @@ resource "aws_cloudwatch_log_group" "log" {
 }
 
 module "balancer" {
-  # source               = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
+  #source               = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
   alarm_arn            = var.alarm_arn
   count                = var.lb_name == null ? 0 : 1
   default_cname        = var.default_cname
@@ -85,7 +85,7 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   repository_name      = local.repository_name
-  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.8.0"
+  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.8.1"
   ssl_certificate_arn  = local.ssl_certificate_arn
   ssl_policy           = var.ssl_policy
   target_group         = var.target_group
@@ -95,7 +95,5 @@ module "apigateway" {
   count       = var.create_api ? 1 : 0
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"
-  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.5.0"
+  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.5.1"
 }
-
-

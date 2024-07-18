@@ -87,6 +87,11 @@ variable "force_approve" {
   description = "if false than an approve is requested, otherwise there is no approve phase after build and before deploy"
 }
 
+variable "lambda_log_group" {
+  default     = ""
+  description = "log group to use if it's a lambda"
+  type        = string
+}
 variable "role_arn_codebuild" {
   default     = ""
   description = "full role to pass if naming convention is not standard"
@@ -242,6 +247,10 @@ variable "tag" {
   description = "tag to be added"
   type        = map(any)
 }
+variable "env_in_repository_name" {
+  description = "name of the repository with 'env' after prefix used if same account is shared"
+  type        = string
+}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 locals {
@@ -287,7 +296,7 @@ locals {
     }
   )
   target_group_ecs_cli = [for k, v in var.target_group : "targetGroupArn=${module.balancer[0].output_lb_target_group[k].arn},containerName=${v["container"]},containerPort=${v["destination_port"]}"]
-  deployspec = templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
+  deployspec = var.deploy_template_name == null ? "" : templatefile("${path.module}/templates/${var.deploy_template_name}.tmpl",
     {
       ENV                            = var.deploy_environment
       target_group_ecs_cli           = local.target_group_ecs_cli

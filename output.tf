@@ -34,3 +34,7 @@ output "role_arn_codebuild" {
   description = "codebuild arn"
   value       = local.role_arn_codebuild
 }
+output "deploy_template_name" {
+  description = "name of the deploy template name"
+  value       = var.deploy_template_name
+}

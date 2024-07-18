@@ -48,35 +48,45 @@ EOF
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {
-  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
   codepipeline_bucket     = var.codepipeline_bucket
   deploy_environment      = var.deploy_environment
+  deploy_template_name    = var.deploy_template_name
   deployspec              = local.deployspec
+  env_in_repository_name  = var.env_in_repository_name
   force_approve           = var.force_approve
   image                   = "aws/codebuild/standard:6.0"
   kms_arn                 = var.kms_arn
   poll_for_source_changes = "false"
-  prefix                  = var.prefix
   repository_name         = local.repository_name
   role_arn_codebuild      = local.role_arn_codebuild
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.6.1"
+  # source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.7.0"
 }
 #trivy:ignore:AVD-AWS-0017
 resource "aws_cloudwatch_log_group" "log" {
-  for_each          = toset([module.deploy.cloudwatch_build_log, module.deploy.cloudwatch_deploy_log])
+  #skip null values
+  for_each = {
+    for k, v in toset([module.deploy.cloudwatch_build_log, module.deploy.cloudwatch_deploy_log]) :
+  k => v if v != null }
   name              = each.value
+  retention_in_days = var.retention_in_days
+}
+# if a lambda then created lambda log group
+resource "aws_cloudwatch_log_group" "lambda" {
+  count             = var.lambda_log_group == "" ? 0 : 1
+  name              = var.lambda_log_group
   retention_in_days = var.retention_in_days
 }
 
 module "balancer" {
   #source               = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
   alarm_arn            = var.alarm_arn
-  count                = var.lb_name == null ? 0 : 1
+  count                = var.lb_name == "" ? 0 : 1
   default_cname        = var.default_cname
   deploy_environment   = var.deploy_environment
   deregistration_delay = 120

@@ -48,7 +48,7 @@ EOF
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {
-  source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
+  # source                  = "/Users/vcrini/Repositories/terraform-modules/deploy_x_application"
   branch_name             = var.branch_name
   buildspec               = local.buildspec
   codepipeline_bucket     = var.codepipeline_bucket
@@ -65,7 +65,7 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  # source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.7.0"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.7.1"
 }
 #trivy:ignore:AVD-AWS-0017
 resource "aws_cloudwatch_log_group" "log" {
@@ -85,8 +85,9 @@ resource "aws_cloudwatch_log_group" "lambda" {
 
 module "balancer" {
   #source               = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
-  alarm_arn            = var.alarm_arn
-  count                = var.lb_name == "" ? 0 : 1
+  alarm_arn = var.alarm_arn
+  # count     = var.lb_name == "" ? 0 : 1
+  for_each             = var.lb_name != null ? toset(["0"]) : toset([])
   default_cname        = var.default_cname
   deploy_environment   = var.deploy_environment
   deregistration_delay = 120
@@ -102,7 +103,8 @@ module "balancer" {
   vpc_id               = var.vpc_id
 }
 module "apigateway" {
-  count       = var.create_api ? 1 : 0
+  #count = var.create_api ? 1 : 0
+  for_each    = var.create_api ? toset(["0"]) : toset([])
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"
   source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.5.1"

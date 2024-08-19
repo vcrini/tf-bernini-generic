@@ -84,10 +84,10 @@ resource "aws_cloudwatch_log_group" "lambda" {
 }
 
 module "balancer" {
-  #source               = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
+  # source    = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
   alarm_arn = var.alarm_arn
   # count     = var.lb_name == "" ? 0 : 1
-  for_each             = var.lb_name != null ? toset(["0"]) : toset([])
+  for_each             = var.lb_name != "" ? toset(["0"]) : toset([])
   default_cname        = var.default_cname
   deploy_environment   = var.deploy_environment
   deregistration_delay = 120

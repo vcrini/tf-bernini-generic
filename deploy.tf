@@ -21,7 +21,7 @@ module "ecr_immutable" {
 }
 EOF
   #source               = "/Users/vcrini/Repositories/terraform-modules/ecr"
-  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.1"
+  source = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.1.0"
 }
 module "ecr_mutable" {
   force_delete = var.force_ecr_delete
@@ -44,7 +44,7 @@ module "ecr_mutable" {
       ]
  }
 EOF
-  source       = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.0.1"
+  source       = "git::https://bitbucket.org/valeri0/ecr.git?ref=1.1.0"
   # source = "/Users/vcrini/Repositories/terraform-modules/ecr"
 }
 module "deploy" {
@@ -65,7 +65,7 @@ module "deploy" {
   role_arn_codepipeline   = local.role_arn_codepipeline
   role_arn_source         = local.role_arn_source
   s3_cache                = var.s3_cache
-  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.7.1"
+  source                  = "git::https://bitbucket.org/valeri0/deploy_x_application?ref=1.8.0"
 }
 #trivy:ignore:AVD-AWS-0017
 resource "aws_cloudwatch_log_group" "log" {
@@ -96,7 +96,7 @@ module "balancer" {
   nlb_name             = var.nlb_name
   prefix               = var.prefix
   repository_name      = local.repository_name
-  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.8.1"
+  source               = "git::https://bitbucket.org/valeri0/load_balancer.git//?ref=1.9.0"
   ssl_certificate_arn  = local.ssl_certificate_arn
   ssl_policy           = var.ssl_policy
   target_group         = var.target_group
@@ -107,5 +107,5 @@ module "apigateway" {
   for_each    = var.create_api ? toset(["0"]) : toset([])
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"
-  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.6.0"
+  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.7.0"
 }

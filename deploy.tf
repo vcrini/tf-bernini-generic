@@ -107,5 +107,5 @@ module "apigateway" {
   for_each    = var.create_api ? toset(["0"]) : toset([])
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"
-  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.7.0"
+  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.7.1"
 }

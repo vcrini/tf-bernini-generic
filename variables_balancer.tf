@@ -10,7 +10,7 @@ variable "default_cname" {
 
 variable "lb_name" {
   description = "balancer name"
-  default     = null
+  default     = ""
   type        = string
 }
 variable "nlb_name" {

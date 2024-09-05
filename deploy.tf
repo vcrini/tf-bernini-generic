@@ -104,6 +104,9 @@ module "balancer" {
 }
 module "apigateway" {
   #count = var.create_api ? 1 : 0
+  providers = {
+    aws = aws.no-defauls
+  }
   for_each    = var.create_api ? toset(["0"]) : toset([])
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"

@@ -85,8 +85,7 @@ resource "aws_cloudwatch_log_group" "lambda" {
 
 module "balancer" {
   # source    = "/Users/vcrini/Repositories/terraform-modules/load_balancer"
-  alarm_arn = var.alarm_arn
-  # count     = var.lb_name == "" ? 0 : 1
+  alarm_arn            = var.alarm_arn
   for_each             = var.lb_name != "" ? toset(["0"]) : toset([])
   default_cname        = var.default_cname
   deploy_environment   = var.deploy_environment
@@ -109,5 +108,5 @@ module "apigateway" {
   for_each    = var.create_api ? toset(["0"]) : toset([])
   api_gateway = var.api_gateway
   # source      = "/Users/vcrini/Repositories/terraform-modules/tf-apigateway"
-  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.9.0"
+  source = "git::https://github.com/vcrini/tf-apigateway//?ref=0.10.0"
 }
